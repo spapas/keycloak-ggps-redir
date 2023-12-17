@@ -25,12 +25,20 @@ public class GgpsRedirEndpoint implements RealmResourceProvider {
     @Path("redir")
     @Produces(MediaType.TEXT_PLAIN)
     public Response get2(@QueryParam("url") String url) {
-
-        try {
-            return Response.temporaryRedirect(new URI(url)).build();
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
+        URI uri;
+        if(url == null || url.isBlank()) {
+            url = "https://www.gov.gr/";
         }
+        try {
+            uri = new URI(url);
+        } catch (URISyntaxException e) {
+            try {
+                uri = new URI("https://www.gov.gr/");
+            } catch (URISyntaxException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+        return Response.temporaryRedirect(uri).build();
     }
 
     @Override
